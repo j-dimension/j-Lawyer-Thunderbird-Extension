@@ -1,0 +1,38 @@
+{
+  "manifest_version": 2,
+  "name": "Email To j-Lawyer",
+  "version": "0.1",
+  "description": "Sendet E-Mails an einen j-Lawyer-Server",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "menus", 
+    "messagesRead",
+    "sensitiveDataUpload", 
+    "notifications", 
+    "storage", 
+    "<all_urls>"
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "message_display_action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "24": "icons/icon-24.png",
+      "32": "icons/icon-32.png"
+    },
+    "default_title": "Email an j-Lawyer senden"
+  },
+  "applications": {
+    "gecko": {
+      "id": "maximiliansteinert@googlemail.com"
+    }
+  }
+}
