@@ -1,12 +1,12 @@
 # j-Lawyer-Thunderbird-Extension
 
-# Alle Dateien in einen Ordner herunterladen
+### Alle Dateien in einen Ordner herunterladen
 
-# Alle Dateien und Unterordner in ein .zip Archiv packen und dieses j-Lawyer-Thunderbird.zip nennen.
+### Alle Dateien und Unterordner in ein .zip Archiv packen und dieses j-Lawyer-Thunderbird.zip nennen.
 
-# Die Datei umbenennen in j-Lawyer-Thunderbird.xpi
+### Die Datei umbenennen in j-Lawyer-Thunderbird.xpi
 
-# Installation
+### Installation
 Thunderbird öffnen
 
 => Erweiterungen
