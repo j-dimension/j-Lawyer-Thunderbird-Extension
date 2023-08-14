@@ -8,11 +8,12 @@ document.addEventListener("DOMContentLoaded", function() {
     const feedback = document.getElementById("feedback");
     const customizableLabel = document.getElementById("customizableLabel"); 
     const updateDataButton = document.getElementById("updateDataButton");
+    
 
     
     findFileNumberInRawMessage()
         
-
+    // Code für den Senden Button
     if (submitButton && userInput && feedback) {
         submitButton.addEventListener("click", function() {
             let input = userInput.value.trim();  // Entferne Leerzeichen
@@ -56,6 +57,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     username: result.username,
                     password: result.password,
                     serverAddress: result.serverAddress
+                    
                 });
     
                 // Setzen Sie das Feedback zurück, während auf eine Antwort gewartet wird
@@ -159,3 +161,4 @@ function getCase(username, password, serverAddress) {
       return response.json();
     });
   }
+

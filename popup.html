@@ -1,21 +1,92 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Eingabe</title>
-</head>
-<body>
-    <p>Aktenzeichen:</p>
-    <textarea id="userInput"></textarea>
-    <button id="submitButton">Senden</button>
-    
-    <p id="customizableLabel">Ihr Label hier</p>
-    <button id="recommendCaseButton">an empfohlene Akte senden</button>
-    
-    
-    <button id="updateDataButton" style="display:block; margin-top: 10px; font-size: 0.8em;">Daten aktualisieren</button>
+    <style>
+        /* Grundlegende Stilrichtlinien für das gesamte Popup */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
 
-    <p id="feedback" style="color:red;"></p> 
-    <script src="popup.js"></script> 
+        /* Stil für das Eingabefeld */
+        #userInput {
+            width: 85%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        /* Allgemeiner Stil für die Schaltflächen */
+        button {
+            padding: 8px 15px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        /* Unterscheidende Stile für verschiedene Schaltflächen */
+        #submitButton {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #recommendCaseButton {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        #updateDataButton {
+            background-color: #FFC107;
+            color: black;
+            font-size: 0.8em;
+        }
+
+        /* Feedback-Paragraphenstil */
+        #feedback {
+            color: red;
+            margin-top: 20px;
+        }
+
+        /* Anpassung des Abstands zwischen den Elementen */
+        p {
+            margin-bottom: 10px;
+        }
+
+        /* Stil für das Eingabe-Div */
+        #inputContainer {
+            padding: 15px;
+            border: 2px solid #4CAF50; /* Farbe des Senden-Buttons für Konsistenz */
+            border-radius: 10px;
+            background-color: #f7f7f7; /* leicht grauer Hintergrund */
+            margin-bottom: 20px; /* Abstand zum Rest des Inhalts */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="inputContainer">
+        <p>Aktenzeichen:</p>
+        <input type="text" id="userInput">
+        <button id="submitButton">Senden</button>
+    </div>
+
+    <p id="customizableLabel">kein Vorschlag</p>
+    <button id="recommendCaseButton">an empfohlene Akte senden</button>
+
+    <button id="updateDataButton">Daten aktualisieren</button>
+    <p id="feedback"></p>
+
+    <script src="popup.js"></script>
 </body>
+
 </html>

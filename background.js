@@ -1,4 +1,6 @@
-async function sendEmailToServer(caseId, username, password, serverAddress, fileNumber) {
+let documentUploadedId = null;
+
+async function sendEmailToServer(caseId, username, password, serverAddress, documentTag) {
     console.log("Case ID: " + caseId);
     const url = serverAddress + '/j-lawyer-io/rest/v1/cases/document/create';
 
@@ -46,12 +48,15 @@ async function sendEmailToServer(caseId, username, password, serverAddress, file
         }
         return response.json();
     }).then(data => {
-        console.log(data);
+        documentUploadedId = data.id;
+        console.log("Dokument ID: " + data.id);
         browser.runtime.sendMessage({ type: "success" });
+        setDocumentTag(username, password, serverAddress, documentTag);
     }).catch(error => {
         console.log('Error:', error);
         browser.runtime.sendMessage({ type: "error", content: error.message });
     });
+    
 }
 
 
@@ -113,7 +118,7 @@ function getCurrentDateFormatted() {
     const year = currentDate.getFullYear();
     
     // Die getMonth() Methode gibt einen Wert zwischen 0 (für Januar) und 11 (für Dezember) zurück. 
-    // Daher müssen wir 1 hinzufügen, um den korrekten Monat zu erhalten.
+    // Daher ist 1 hinzufügen, um den korrekten Monat zu erhalten.
     let month = currentDate.getMonth() + 1;
     month = month < 10 ? '0' + month : month;  // Fügt eine führende Null hinzu, wenn der Monat kleiner als 10 ist
 
@@ -124,22 +129,55 @@ function getCurrentDateFormatted() {
 }
 
 
+
+function setDocumentTag(username, password, serverAddress, documentTag) {
+  
+  const headers = new Headers();
+  headers.append('Authorization', 'Basic ' + btoa(''+username+':'+ password+''));
+  headers.append('Content-Type', 'application/json');
+  
+  const id = documentUploadedId;
+
+  const url = serverAddress + "/j-lawyer-io/rest/v5/cases/documents/" + id + "/tags";
+
+  // den Payload erstellen
+  const payload = {
+    name: documentTag
+  };
+
+
+  fetch(url, {
+    method: 'PUT',
+    headers: headers,
+    body: JSON.stringify(payload)
+  }).then(response => {
+      if (!response.ok) {
+          throw new Error('Network response was not ok');
+      }
+      return response.json();
+  });
+}
+
+
+
 browser.runtime.onMessage.addListener(async (message) => {
   if (message.type === "fileNumber" || message.type === "case") {
-    console.log("Die Eingabe war: " + message.content);
+    console.log("Das eingegeben Aktenzeichen: " + message.content);
 
-    browser.storage.local.get(["username", "password", "serverAddress"]).then(result => {
+    browser.storage.local.get(["username", "password", "serverAddress", "documentTag"]).then(result => {
       const fileNumber = String(message.content); 
 
       getCase(result.username, result.password, result.serverAddress).then(data => {
         const caseId = findIdByFileNumber(data, fileNumber);
+        console.log("DocumentTag : " + result.documentTag);
 
         if (caseId) {
-          sendEmailToServer(caseId, result.username, result.password, result.serverAddress, fileNumber);
+          sendEmailToServer(caseId, result.username, result.password, result.serverAddress, result.documentTag);
         } else {
           console.log('Keine übereinstimmende ID gefunden');
         }
       });
     });
+    
   }
 });
