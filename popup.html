@@ -7,13 +7,14 @@
     <style>
         /* Grundlegende Stilrichtlinien für das gesamte Popup */
         body {
+            width: 350px;
             font-family: Arial, sans-serif;
             margin: 20px;
         }
 
         /* Stil für das Eingabefeld */
         #userInput {
-            width: 85%;
+            width: 90%;
             padding: 10px;
             margin-bottom: 10px;
             border: 1px solid #ddd;
@@ -62,29 +63,82 @@
             margin-bottom: 10px;
         }
 
-        /* Stil für das Eingabe-Div */
-        #inputContainer {
+        /* Stil für die Container */
+        #inputContainer, #feedbackContainer {
             padding: 15px;
-            border: 2px solid #4CAF50; /* Farbe des Senden-Buttons für Konsistenz */
             border-radius: 10px;
             background-color: #f7f7f7; /* leicht grauer Hintergrund */
             margin-bottom: 20px; /* Abstand zum Rest des Inhalts */
+        }
+
+        #inputContainer {
+            border: 2px solid #4CAF50; /* Farbe des Senden-Buttons für Konsistenz */
+        }
+        
+        #feedbackContainer {
+            border: 2px solid #2196F3; /* Blauer Rahmen */
+        }
+
+
+        /* Stil für das Suchfeld */
+        #searchInput {
+            width: 90%;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* Stil für die Ergebnisliste */
+        #resultsList {
+            max-height: 170px;  /* Begrenzt die Höhe der Liste */
+            overflow-y: auto;  /* Fügt einen Scroll-Balken hinzu, wenn die Liste die maximale Höhe überschreitet */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        /* Stil für jedes Ergebniselement in der Liste */
+        .resultItem {
+            padding: 8px 12px;
+            cursor: pointer;  /* Ändert den Mauszeiger zu einem Zeiger, wenn er über einem Element schwebt, was anzeigt, dass es anklickbar ist */
+            border-bottom: 1px solid #eee;  /* Fügt eine Trennlinie zwischen den Elementen hinzu */
+            font-size: 13px;
+        }
+
+        /* Ändert den Hintergrund des Elements, wenn der Mauszeiger darüber schwebt */
+        .resultItem:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Entfernt die Trennlinie für das letzte Element in der Liste */
+        .resultItem:last-child {
+            border-bottom: none;
         }
     </style>
 </head>
 
 <body>
+    <div id="feedbackContainer">
+        <!-- Eingabefeld für die Suche und die Erbenisliste -->
+        <input type="text" id="searchInput" placeholder="Fall suchen...">
+        <div id="resultsList"></div>
+
+        <p id="customizableLabel">kein Vorschlag</p>
+        <button id="recommendCaseButton">In empfohlener Akte speichern</button>
+        <button id="saveAttachmentsButton2">Nur Anhang speichern</button>
+    </div>
+
     <div id="inputContainer">
         <p>Aktenzeichen:</p>
         <input type="text" id="userInput">
-        <button id="submitButton">Senden</button>
+        <button id="submitButton">In Akte speichern</button>
+        <button id="saveAttachmentsButton1">Nur Anhang speichern</button>
     </div>
 
-    <p id="customizableLabel">kein Vorschlag</p>
-    <button id="recommendCaseButton">an empfohlene Akte senden</button>
+    <p id="feedback"></p>
 
     <button id="updateDataButton">Daten aktualisieren</button>
-    <p id="feedback"></p>
 
     <script src="popup.js"></script>
 </body>

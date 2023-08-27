@@ -1,14 +1,12 @@
 {
   "manifest_version": 2,
-  "name": "Email To j-Lawyer",
-  "version": "0.2",
+  "name": "j-Lawyer-Thunderbird-Extension",
+  "version": "0.4",
   "description": "Sendet E-Mails an einen j-Lawyer-Server",
   "permissions": [
     "activeTab",
-    "tabs",
-    "menus", 
+    "tabs", 
     "messagesRead",
-    "sensitiveDataUpload", 
     "notifications", 
     "storage", 
     "<all_urls>"

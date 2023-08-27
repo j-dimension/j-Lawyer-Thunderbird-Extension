@@ -8,12 +8,13 @@ document.addEventListener("DOMContentLoaded", function() {
     const feedback = document.getElementById("feedback");
     const customizableLabel = document.getElementById("customizableLabel"); 
     const updateDataButton = document.getElementById("updateDataButton");
-    
+    const saveAttachmentsButton1 = document.getElementById("saveAttachmentsButton1");
+    const saveAttachmentsButton2 = document.getElementById("saveAttachmentsButton2");
 
     
     findFileNumberInRawMessage()
         
-    // Code für den Senden Button
+    // Code für den "in Akte speichern" Button
     if (submitButton && userInput && feedback) {
         submitButton.addEventListener("click", function() {
             let input = userInput.value.trim();  // Entferne Leerzeichen
@@ -34,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
 
                 // Setzen Sie das Feedback zurück, während auf eine Antwort gewartet wird
-                feedback.textContent = "Senden...";
+                feedback.textContent = "Speichern...";
                 feedback.style.color = "blue";
             });
         });
@@ -60,8 +61,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     
                 });
     
-                // Setzen Sie das Feedback zurück, während auf eine Antwort gewartet wird
-                feedback.textContent = "Senden...";
+                // Setzt Feedback zurück, während auf eine Antwort gewartet wird
+                feedback.textContent = "Speichern...";
                 feedback.style.color = "blue";
             });
             feedback.textContent = "An empfohlene Akte gesendet!";
@@ -69,24 +70,85 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    
+    
+    // Event Listener für den 1. "Nur Anhänge speichern" Button
+    if (saveAttachmentsButton1) {
+        saveAttachmentsButton1.addEventListener("click", function() {
+            let input = userInput.value.trim();  // Entferne Leerzeichen
+            
+            const feedback = document.getElementById("feedback");
+    
+            if (!input) {
+                feedback.textContent = "Bitte geben Sie ein gültiges Aktenzeichen ein.";
+                feedback.style.color = "red";
+                return; // Beendet die Funktion, wenn der Eingabewert ungültig ist
+            }
+    
+            browser.storage.local.get(["username", "password", "serverAddress", "documentTag"]).then(result => {
+                browser.runtime.sendMessage({
+                    type: "saveAttachments",
+                    content: input,
+                    username: result.username,
+                    password: result.password,
+                    serverAddress: result.serverAddress,
+                    documentTag: result.documentTag
+                });
+    
+                // Setzen Sie das Feedback zurück, während auf eine Antwort gewartet wird
+                feedback.textContent = "Senden...";
+                feedback.style.color = "blue";
+            });
+        });
+    }
+
+    // Event Listener für den 2. "Nur Anhänge speichern" Button
+    if (saveAttachmentsButton2 && customizableLabel) {
+        saveAttachmentsButton2.addEventListener("click", function() {
+            
+            const feedback = document.getElementById("feedback");
+
+            browser.storage.local.get(["username", "password", "serverAddress", "documentTag"]).then(result => {
+                browser.runtime.sendMessage({
+                    type: "saveAttachments",
+                    content: currentItem.fileNumber, 
+                    username: result.username,
+                    password: result.password,
+                    serverAddress: result.serverAddress,
+                    documentTag: result.documentTag
+                });
+
+                // Setzen Sie das Feedback zurück, während auf eine Antwort gewartet wird
+                feedback.textContent = "Speichern...";
+                feedback.style.color = "blue";
+            });
+        });
+    }
+
+
     // Event Listener für den "Daten aktualisieren" Button
     if (updateDataButton) {
         updateDataButton.addEventListener("click", function() {
             browser.storage.local.get(["username", "password", "serverAddress"]).then(result => {
-                getCase(result.username, result.password, result.serverAddress).then(data => {
+                feedback.textContent = "Daten werden aktualisiert...";
+                feedback.style.color = "blue";
+                getCases(result.username, result.password, result.serverAddress).then(data => {
                     const casesRaw = data;
                     browser.storage.local.set({
                         cases: casesRaw
                     });
                     console.log("Cases heruntergeladen: " + casesRaw);
+                    feedback.textContent = "Daten aktualisiert!";
+                    feedback.style.color = "green";
                 });
             });
         });
     }
 
+
 });
 
-// Hören Sie auf Antworten vom Hintergrund-Skript
+// Hört auf Antworten vom Hintergrund-Skript background.js
 browser.runtime.onMessage.addListener((message) => {
     const feedback = document.getElementById("feedback");
     if (message.type === "success") {
@@ -100,7 +162,7 @@ browser.runtime.onMessage.addListener((message) => {
 
 
 async function findFileNumberInRawMessage() {
-    // Nachrichteninhalt mithilfe der Thunderbird API abrufen
+    // Nachrichteninhalt abrufen
     let currentTabId = await messenger.mailTabs.getCurrent();
     console.log("Tab Id: " + currentTabId.id);
       
@@ -110,10 +172,10 @@ async function findFileNumberInRawMessage() {
   
     let rawMessage = await messenger.messages.getRaw(messageData.id);
     
-    // Jetzt sollten wir die gespeicherten Daten aus browser.storage.local abrufen
+    // die gespeicherte Daten aus browser.storage.local abrufen
     let storedData = await browser.storage.local.get("cases");
     
-    // Es wird davon ausgegangen, dass die gespeicherten Daten in einem Array namens 'cases' liegen.
+    // die gespeicherten Daten in einem Array namens 'cases' 
     let casesArray = storedData.cases;
   
     for (let item of casesArray) {
@@ -144,7 +206,7 @@ async function findFileNumberInRawMessage() {
 }
 
 
-function getCase(username, password, serverAddress) {
+function getCases(username, password, serverAddress) {
     const url = serverAddress +'/j-lawyer-io/rest/v1/cases/list';
   
     const headers = new Headers();
@@ -160,5 +222,77 @@ function getCase(username, password, serverAddress) {
       }
       return response.json();
     });
-  }
+}
+
+
+// Event-Listener für die Suche
+document.getElementById("searchInput").addEventListener("input", function() {
+    const query = this.value.trim();
+    if (query) {
+        searchCases(query);
+    } else {
+        document.getElementById("resultsList").innerHTML = "";
+    }
+});
+
+
+// Funktion zum Suchen von Fällen
+async function searchCases(query) {
+    let storedData = await browser.storage.local.get("cases");
+    let casesArray = storedData.cases;
+
+    let results = casesArray.filter(item => item.name.includes(query));
+
+    // Ergebnisse basierend auf der längsten aufeinanderfolgenden Übereinstimmungslänge bewerten und sortieren
+    results = results.map(item => {
+        return {
+            ...item,
+            matchLength: getConsecutiveMatchCount(item.name, query)
+        };
+    }).filter(item => item.matchLength > 0) // (Optional) Nur Ergebnisse mit einer Mindestübereinstimmungslänge anzeigen
+    .sort((a, b) => b.matchLength - a.matchLength);
+
+    let resultsHTML = "";
+    results.forEach(item => {
+        resultsHTML += `<div class="resultItem" data-id="${item.id}">${item.name} (${item.fileNumber})</div>`;
+    });
+
+    document.getElementById("resultsList").innerHTML = resultsHTML;
+
+    // Event-Listener für das Klicken auf ein Ergebniselement
+    document.querySelectorAll(".resultItem").forEach(item => {
+        item.addEventListener("click", function() {
+            currentItem = {
+                id: this.getAttribute("data-id"),
+                name: this.textContent.split(" (")[0],
+                fileNumber: this.textContent.split("(")[1].split(")")[0]
+            };
+            console.log("Ausgewählter Fall:", currentItem);
+            
+            // aktualisieren des Label "Recommended Case" mit der gefundenen Akte
+            const customizableLabel = document.getElementById("customizableLabel");
+            customizableLabel.textContent = currentItem.fileNumber + ": " + currentItem.name;
+        });
+    });
+}
+
+function getConsecutiveMatchCount(str, query) {
+    let count = 0;
+    let maxCount = 0;
+    for (let i = 0, j = 0; i < str.length; i++) {
+        if (str[i] === query[j]) {
+            count++;
+            j++;
+            if (count > maxCount) {
+                maxCount = count;
+            }
+        } else {
+            count = 0;
+            j = 0;
+        }
+    }
+    return maxCount;
+}
+
+
 
