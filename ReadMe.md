@@ -1,6 +1,6 @@
-# Thunderbird Extension - Eingabepopup
+# Thunderbird Extension für j-Lawyer.org
 
-Dies ist eine Thunderbird-Erweiterung, die ein Eingabepopup bereitstellt, um Aktenzeichen und zugehörige Daten zu speichern.
+Dies ist eine Thunderbird-Erweiterung, die ein Interface bereitstellt, um Emails und / oder Anhänge zu Akten auf einem j-Lawyer.org Server zu speichern.
 
 ## Features
 
