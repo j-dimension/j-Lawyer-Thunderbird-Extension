@@ -241,7 +241,8 @@ async function searchCases(query) {
     let storedData = await browser.storage.local.get("cases");
     let casesArray = storedData.cases;
 
-    let results = casesArray.filter(item => item.name.includes(query));
+    query = query.toUpperCase();
+    let results = casesArray.filter(item => item.name.toUpperCase().includes(query));
 
     // Ergebnisse basierend auf der längsten aufeinanderfolgenden Übereinstimmungslänge bewerten und sortieren
     results = results.map(item => {
